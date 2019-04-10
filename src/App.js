@@ -9,7 +9,7 @@ class App extends Component {
     return axios.get("https://api.discogs.com/releases/249504").then(res => {
       console.log(res.data)
     }).catch(err => {
-      console.log(err);
+      console.log(err); 
     })
   }
 
