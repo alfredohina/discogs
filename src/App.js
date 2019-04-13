@@ -8,35 +8,49 @@ class App extends Component {
     super();
     this.state = {
       searchInput: "",
-      searchTypeArtist: "",
-      searchTypeAlbum: "",
+      searchType: "",
       data: [],
-      pagination: 1
+      pagination: 1,
+      totalPages: 0,
     }
   }
 
   changePageMore(){
     console.log(this.state.pagination)
-    this.setState({pagination:this.state.pagination+1})
-    this.searchData()
+    this.setState(
+      {pagination:this.state.pagination+1},
+      () => this.searchData()
+      )
   }
 
   changePageLess(){
     console.log(this.state.pagination)
-    this.setState({pagination:this.state.pagination-1})
-    this.searchData()
+    this.setState(
+      {pagination:this.state.pagination-1},
+      () => this.searchData()
+      )
   }
 
   searchData() {
-    // this.setState({searchInput:""})
+    if (this.state.searchInput === ""){
+      setTimeout(() => {
+        this.setState({
+          message: false
+        })
+      }, 3000);
+      return this.setState({
+        message: true
+      })
+    }
     const search = this.state.searchInput
     return axios.get(`https://api.discogs.com/database/search?q=${this.state.searchInput}&type=${this.state.searchType}&per_page=3&page=${this.state.pagination}&token=gCGETrFVyKJqymVrVpesIWmMbfLtdRwazehrJfRq`).then(res => {
       const allResData = res.data.results.map(e => e)
       this.setState({
         data: allResData,
         activation: true,
+        totalPages: res.data.pagination.pages
       })
-      console.log(res.data.pagination.items)
+      console.log(res.data.pagination)
     }).catch(err => {
       console.log(err); 
     })
@@ -60,11 +74,14 @@ class App extends Component {
 <input type="radio" value="artist" checked={this.state.searchType === 'artist'} onChange={e => this.setState({searchType:"artist"})} />Artist
 <input type="radio" value="album" checked={this.state.searchType === 'release'} onChange={e => this.setState({searchType:"release"})} />Album
 
+{this.state.message ? (
+  <p>Write for an artist or album</p>
+):('')}
 
           <button onClick={e => this.searchData()}>
             Launch API
           </button>
-
+          
           <button onClick={e => this.checkState()}>
             Check STATE
           </button>
@@ -72,13 +89,6 @@ class App extends Component {
           {this.state.data.length > 0 ? 
           
           <div>
-          <button onClick={e => this.changePageLess()}>
-          -1
-        </button>
-
-        <button onClick={e => this.changePageMore()}>
-          +1
-        </button>
 
           <ul>
           {this.state.data.map(function(b){
@@ -90,6 +100,21 @@ class App extends Component {
             }
           )}
         </ul>
+
+          <button
+            onClick={e => this.changePageLess()}
+            disabled={this.state.pagination <= 1}
+          >
+          -1
+        </button>
+        <p>{this.state.pagination}</p>
+        <button 
+          onClick={e => this.changePageMore()}
+          disabled={this.state.pagination >= this.state.totalPages}
+        >
+          +1
+        </button>
+        
         </div>
         :
         
