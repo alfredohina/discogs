@@ -6,26 +6,24 @@ export class Album extends Component {
     constructor() {
         super();
         this.state = {
-            data: ""
+            data: "",
+            showModal: false
         }
     }
 
+    togglePopup() {
+        this.setState({
+            showModal: !this.state.showModal
+        });
+    }
+
     componentDidMount() {
-        const url = `https://api.discogs.com/artists${this.props.location.pathname}`
+        const url = this.props.location.params.resource_url
+        console.log(url)
         return axios.get(url).then(res => {
             this.setState({
                 data: res.data
             })
-        }).catch(err => {
-            console.log(err);
-        })
-    }
-
-
-    launchReleases() {
-        const url = `https://api.discogs.com/artists${this.props.location.pathname}/releases`
-        return axios.get(url).then(res => {
-            console.log(res.data)
         }).catch(err => {
             console.log(err);
         })
@@ -36,7 +34,7 @@ export class Album extends Component {
         return (
             <div>
                 <button
-                    onClick={e => this.launchReleases()}
+                    onClick={e => console.log(this.state)}
                 >
                     Detail
                     props
@@ -45,6 +43,28 @@ export class Album extends Component {
                 <p>{params.title}</p>
                 <img src={params.cover_image} />
                 <p>{params.type}</p>
+                <p>Tracklist:</p>
+
+                {this.state.data.tracklist ? 
+                <ul>
+                    {this.state.data.tracklist.map(function (track) {
+                        console.log(track)
+                        return <li
+                            key={track.position}
+                        >
+                            <p>{track.position + " - " + track.duration + "  " + track.title}</p>
+
+                        </li>
+                    }
+                    )}
+                </ul>
+                : null }
+
+                <button
+                onClick={() => console.log(this.state.data.tracklist)}
+                >STATE</button>
+
+
             </div>
         )
     }

@@ -71,7 +71,7 @@ export class _Home extends Component {
 
 <input type="radio" value="both" checked={this.state.searchType === ""} onChange={e => this.setState({searchType:""})} />Artist and Album
 <input type="radio" value="artist" checked={this.state.searchType === 'artist'} onChange={e => this.setState({searchType:"artist"})} />Artist
-<input type="radio" value="album" checked={this.state.searchType === 'release'} onChange={e => this.setState({searchType:"release"})} />Album
+<input type="radio" value="release" checked={this.state.searchType === 'release'} onChange={e => this.setState({searchType:"release"})} />Album
 
 {this.state.message ? (
   <p>Write for an artist or album</p>

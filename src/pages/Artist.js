@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import axios from 'axios';
-import { Popup } from "./Popup"
+import { Popup } from "../components/Popup"
 
 
 export class Artist extends Component {
