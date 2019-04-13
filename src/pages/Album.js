@@ -1,5 +1,11 @@
 import React, { Component } from "react";
 import axios from 'axios';
+import styled from 'styled-components'
+
+
+import Card from '@material-ui/core/Card';
+import CardContent from '@material-ui/core/CardContent';
+import Typography from '@material-ui/core/Typography';
 
 
 export class Album extends Component {
@@ -10,6 +16,7 @@ export class Album extends Component {
             showModal: false
         }
     }
+
 
     togglePopup() {
         this.setState({
@@ -31,8 +38,17 @@ export class Album extends Component {
 
     render() {
         const params = this.props.location.params
+
+        const Ul = styled.ul`
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        `;
+
+
         return (
             <div>
+
                 <button
                     onClick={e => console.log(this.state)}
                 >
@@ -45,23 +61,33 @@ export class Album extends Component {
                 <p>{params.type}</p>
                 <p>Tracklist:</p>
 
-                {this.state.data.tracklist ? 
-                <ul>
-                    {this.state.data.tracklist.map(function (track) {
-                        console.log(track)
-                        return <li
-                            key={track.position}
-                        >
-                            <p>{track.position + " - " + track.duration + "  " + track.title}</p>
+                {this.state.data.tracklist ?
+                    <Ul>
+                        {this.state.data.tracklist.map(function (track) {
+                            console.log(track)
+                            return <div style={{ width: 200, height: 200, margin: 20}}>
+                                <Card key={track.position}>
+                                    <CardContent>
+                                        <Typography color="textSecondary" gutterBottom>
+                                            {track.position}
+                                        </Typography>
+                                        <Typography variant="h5" component="h2">
+                                            {track.title}
+                                        </Typography>
+                                        <Typography color="textSecondary">
+                                            {track.duration}
+                                        </Typography>
+                                    </CardContent>
+                                </Card>
+                            </div>
 
-                        </li>
-                    }
-                    )}
-                </ul>
-                : null }
+                        }
+                        )}
+                    </Ul>
+                    : null}
 
                 <button
-                onClick={() => console.log(this.state.data.tracklist)}
+                    onClick={() => console.log(this.state.data.tracklist)}
                 >STATE</button>
 
 

@@ -4,6 +4,8 @@ import '../App.css';
 import axios from 'axios';
 import { connect } from 'react-redux';
 import { NavLink } from "react-router-dom";
+import Button from '@material-ui/core/Button';
+
 
 
 export class _Home extends Component {
@@ -62,7 +64,7 @@ export class _Home extends Component {
   render() {
     return (
       <div className="App">
-        <header className="App-header">
+        <div className="App-header">
           <p>Search Artis, Album or both</p>
           <input
             value={this.state.searchInput}
@@ -144,7 +146,13 @@ export class _Home extends Component {
         }
 
 
-        </header>
+
+<Button variant="contained" color="primary">
+      Hello World
+    </Button>
+
+    
+        </div>
       </div>
     );
   }
