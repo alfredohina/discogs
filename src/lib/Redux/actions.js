@@ -1,34 +1,13 @@
-export const login = (user) => {
+export const addToColl = (col) => {
     return {
-        type: "LOGIN",
-        user
+        type: "ADD_TO_COLLECTION",
+        col
     }
   }
   
-  
-  export const logout = () => {
+  export const RemoveFromColl = (col) => {
     return {
-        type: "LOGOUT",
-    }
-  }
-  
-  export const message = () => {
-    return {
-        type: "OK_MESSAGE",
-        message
-    }
-  }
-  
-  export const errorMessageAction = (message) => {
-    return {
-        type: "ADD_MESSAGE",
-        message
-    }
-  }
-  
-  export const imgUpload = (e) => {
-    return {
-        type: "IMG_UPLOAD",
-        image: e.image
+        type: "REMOVE_FROM_COLLECTION",
+        col
     }
   }

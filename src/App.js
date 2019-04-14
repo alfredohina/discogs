@@ -4,11 +4,14 @@ import { Home } from './pages/Home';
 import { Artist } from './pages/Artist';
 import { Album } from './pages/Album';
 import Error404 from './pages/404';
+import { connect } from "react-redux";
+import { withRouter } from 'react-router-dom'
+
 
 
 import './App.css';
 
-class App extends Component {
+class _App extends Component {
  
 
   render() {
@@ -25,4 +28,6 @@ class App extends Component {
   }
 }
 
-export default App;
+// export default App;
+
+export const App = connect(store => store)(withRouter(_App));

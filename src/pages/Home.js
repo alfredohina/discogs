@@ -3,12 +3,14 @@ import logo from '../logo.svg';
 import '../App.css';
 import axios from 'axios';
 import { connect } from 'react-redux';
+import {  addToColl  } from '../lib/Redux/actions';
 import { NavLink } from "react-router-dom";
 import Button from '@material-ui/core/Button';
+import { withRouter } from "react-router-dom";
 
 
 
-export class _Home extends Component {
+class _Home extends React.Component {
   constructor(){
     super();
     this.state = {
@@ -18,6 +20,20 @@ export class _Home extends Component {
       pagination: 1,
       totalPages: 0,
     }
+  }
+
+  static removeFromStore(c, t){
+    t.dispatch({
+      type: "REMOVE_FROM_COLLECTION",
+      collection: c,
+    })
+  }
+
+  static addToStore(c, t){
+     t.dispatch({
+       type: "ADD_TO_COLLECTION",
+       collection: c,
+     })
   }
 
   changePageMore(){
@@ -58,7 +74,7 @@ export class _Home extends Component {
   }
 
   checkState() {
-      console.log(this.state.data)
+      console.log(this.props)
   }
 
   render() {
@@ -90,38 +106,52 @@ export class _Home extends Component {
           {this.state.data.length > 0 ? 
           
           <div>
-
+            
           <ul>
-          {this.state.data.map(function(params){
+          {this.state.data.map(function(params){            
               console.log(params)
             return <li 
             key={params.id}
             >
 
+
             {params.type === "artist" ? 
+            <div>
             <NavLink exact activeStyle={{color:"white"}} to={{
-                pathname: "/artist/" + `${params.id}`,
-                params
+              pathname: "/artist/" + `${params.id}`,
+              params
             }}
             >
             {params.title}
             </NavLink>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => Home.addToStore(params, this.props)}
+            >
+              LOVE
+            </Button>
+            </div>
              : 
+             <div>
              <NavLink exact activeStyle={{color:"white"}} to={{
                 pathname: "/album/" + `${params.id}`,
                 params
             }}
             >
             {params.title}
-            </NavLink>}
-            
-
-
-
-
-
-            </li>
+            </NavLink>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => Home.addToStore(params, this.props)}
+            >
+              LOVE
+            </Button>
+            </div>
             }
+            </li>
+          },this
           )}
         </ul>
 
@@ -144,18 +174,78 @@ export class _Home extends Component {
         
         <p>Nothing to show</p>
         }
-
-
-
-<Button variant="contained" color="primary">
-      Hello World
-    </Button>
-
     
         </div>
+
+
+
+        <p>----------</p>
+        <p>FAVORITE LIST</p>
+
+          
+
+
+
+          {this.props.collection.map(function(params){            
+            console.log(params)
+          return <li 
+          key={params.id}
+          >
+
+          {params.type === "artist" ? 
+
+
+          <div>
+          <NavLink exact activeStyle={{color:"white"}} to={{
+            pathname: "/artist/" + `${params.id}`,
+            params
+          }}
+          >
+          {params.title}
+          </NavLink>
+
+          <Button
+              variant="contained"
+              color="primary"
+              onClick={() => Home.removeFromStore(params, this.props)}
+            >
+              DELETE
+            </Button>
+
+
+          </div>
+           : 
+           <div>
+           <NavLink exact activeStyle={{color:"white"}} to={{
+              pathname: "/album/" + `${params.id}`,
+              params
+          }}
+          >
+          {params.title}
+          </NavLink>
+
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => Home.removeFromStore(params, this.props)}
+            >
+              DELETE
+            </Button>
+
+          </div>
+        
+        }
+        </li>
+        },this
+        )}
+
+
+
+
+
       </div>
     );
   }
 }
 
-export const Home = connect(store => store)(_Home);
+export const Home = connect(store => store)(withRouter(_Home));
