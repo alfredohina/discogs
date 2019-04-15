@@ -1,11 +1,18 @@
 import React, { Component } from "react";
 import axios from 'axios';
 import styled from 'styled-components'
-
-
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
+
+
+const Ul = styled.ul`
+display: flex;
+flex-direction: row;
+flex-wrap: wrap;
+align-items: center;
+justify-content: center;
+`;
 
 
 export class Album extends Component {
@@ -16,7 +23,6 @@ export class Album extends Component {
             showModal: false
         }
     }
-
 
     togglePopup() {
         this.setState({
@@ -39,22 +45,9 @@ export class Album extends Component {
     render() {
         const params = this.props.location.params
 
-        const Ul = styled.ul`
-        display: flex;
-        flex-direction: row;
-        flex-wrap: wrap;
-        `;
-
-
         return (
-            <div>
+            <div className="App-header">
 
-                <button
-                    onClick={e => console.log(this.state)}
-                >
-                    Detail
-                    props
-                </button>
                 <p>{params.id}</p>
                 <p>{params.title}</p>
                 <img src={params.cover_image} />
@@ -65,7 +58,7 @@ export class Album extends Component {
                     <Ul>
                         {this.state.data.tracklist.map(function (track) {
                             console.log(track)
-                            return <div style={{ width: 200, height: 200, margin: 20}}>
+                            return <div style={{ width: 200, height: 200, margin: 20 }}>
                                 <Card key={track.position}>
                                     <CardContent>
                                         <Typography color="textSecondary" gutterBottom>
@@ -85,11 +78,6 @@ export class Album extends Component {
                         )}
                     </Ul>
                     : null}
-
-                <button
-                    onClick={() => console.log(this.state.data.tracklist)}
-                >STATE</button>
-
 
             </div>
         )

@@ -1,17 +1,53 @@
 import React, { Component } from 'react';
-import logo from '../logo.svg';
 import '../App.css';
 import axios from 'axios';
 import { connect } from 'react-redux';
-import {  addToColl  } from '../lib/Redux/actions';
 import { NavLink } from "react-router-dom";
 import Button from '@material-ui/core/Button';
 import { withRouter } from "react-router-dom";
+import TextField from '@material-ui/core/TextField';
+import { withStyles } from '@material-ui/core/styles';
+import Radio from '@material-ui/core/Radio';
+import Divider from '@material-ui/core/Divider';
+import styled from 'styled-components'
 
 
+const StTextField = withStyles({
+  root: {
+    width: 300,
+    marginBottom: 30,
+  },
+})(TextField);
+
+const Radios = withStyles({
+  root: {
+    heigth: 0,
+    padding: "0px 10px",
+  },
+})(Radio);
+
+const FlexRadius = styled.div`
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  `
+
+const PRadius = styled.p`
+  margin: 10px;
+  `
+
+const Pagination = styled.p`
+  margin: 20px;
+  `
+
+const List = styled.li`
+  list-style-type: none; 
+  `
 
 class _Home extends React.Component {
-  constructor(){
+  constructor() {
     super();
     this.state = {
       searchInput: "",
@@ -22,36 +58,36 @@ class _Home extends React.Component {
     }
   }
 
-  static removeFromStore(c, t){
+  static removeFromStore(c, t) {
     t.dispatch({
       type: "REMOVE_FROM_COLLECTION",
       collection: c,
     })
   }
 
-  static addToStore(c, t){
-     t.dispatch({
-       type: "ADD_TO_COLLECTION",
-       collection: c,
-     })
+  static addToStore(c, t, i) {
+    t.dispatch({
+      type: "ADD_TO_COLLECTION",
+      collection: c,
+    })
   }
 
-  changePageMore(){
+  changePageMore() {
     this.setState(
-      {pagination:this.state.pagination+1},
+      { pagination: this.state.pagination + 1 },
       () => this.searchData()
-      )
+    )
   }
 
-  changePageLess(){
+  changePageLess() {
     this.setState(
-      {pagination:this.state.pagination-1},
+      { pagination: this.state.pagination - 1 },
       () => this.searchData()
-      )
+    )
   }
 
   searchData() {
-    if (this.state.searchInput === ""){
+    if (this.state.searchInput === "") {
       setTimeout(() => {
         this.setState({
           message: false
@@ -61,191 +97,222 @@ class _Home extends React.Component {
         message: true
       })
     }
-    const search = this.state.searchInput
     return axios.get(`https://api.discogs.com/database/search?q=${this.state.searchInput}&type=${this.state.searchType}&per_page=3&page=${this.state.pagination}&token=gCGETrFVyKJqymVrVpesIWmMbfLtdRwazehrJfRq`).then(res => {
-      const allResData = res.data.results.map(e => e)
+      const allResData = res.data.results.map(e => {
+        var e
+        this.props.collection.map(i => {
+          if (i.id === e.id) {
+            e.validation = true
+          }
+        })
+        return e
+      })
       this.setState({
         data: allResData,
         totalPages: res.data.pagination.pages
       })
     }).catch(err => {
-      console.log(err); 
+      console.log(err);
     })
   }
 
-  checkState() {
-      console.log(this.props)
-  }
-
   render() {
+
     return (
       <div className="App">
         <div className="App-header">
-          <p>Search Artis, Album or both</p>
-          <input
+
+          <StTextField
+            id="outlined-name"
+            label="What are you looking for?"
+            classes={"afocused"}
             value={this.state.searchInput}
-            onChange={e => this.setState({searchInput:e.target.value})}
+            onChange={e => this.setState({ searchInput: e.target.value })}
+            margin="normal"
+            variant="outlined"
           />
 
-<input type="radio" value="both" checked={this.state.searchType === ""} onChange={e => this.setState({searchType:""})} />Artist and Album
-<input type="radio" value="artist" checked={this.state.searchType === 'artist'} onChange={e => this.setState({searchType:"artist"})} />Artist
-<input type="radio" value="release" checked={this.state.searchType === 'release'} onChange={e => this.setState({searchType:"release"})} />Album
+          <FlexRadius>
+            <Radios
+              checked={this.state.searchType === ""}
+              onChange={e => this.setState({ searchType: "" })}
+              value="both"
+              name="radio-button-demo"
+              aria-label="A"
+            />
+            <PRadius>Artist and Album</PRadius>
+          </FlexRadius>
+          <FlexRadius>
+            <Radios
+              checked={this.state.searchType === 'artist'}
+              onChange={e => this.setState({ searchType: "artist" })}
+              value="artist"
+              name="radio-button-demo"
+              aria-label="A"
+            />
+            <PRadius>Artist</PRadius>
+          </FlexRadius>
+          <FlexRadius>
+            <Radios
+              checked={this.state.searchType === 'release'}
+              onChange={e => this.setState({ searchType: "release" })}
+              value="release"
+              name="radio-button-demo"
+              aria-label="A"
+            />
+            <PRadius>Album</PRadius>
+          </FlexRadius>
 
-{this.state.message ? (
-  <p>Write for an artist or album</p>
-):('')}
-
-          <button onClick={e => this.searchData()}>
-            Launch API
-          </button>
-          
-          <button onClick={e => this.checkState()}>
-            Check STATE
-          </button>
-
-          {this.state.data.length > 0 ? 
-          
-          <div>
-            
-          <ul>
-          {this.state.data.map(function(params){            
-              console.log(params)
-            return <li 
-            key={params.id}
-            >
+          {this.state.message ? (
+            <p>Write for an artist or album</p>
+          ) :
+          <Button variant="contained" color="primary" onClick={e => this.searchData()}>
+            Search
+          </Button>}
 
 
-            {params.type === "artist" ? 
+          {this.state.data.length > 0 ?
+
             <div>
-            <NavLink exact activeStyle={{color:"white"}} to={{
-              pathname: "/artist/" + `${params.id}`,
-              params
-            }}
-            >
-            {params.title}
-            </NavLink>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={() => Home.addToStore(params, this.props)}
-            >
-              LOVE
-            </Button>
+
+              <ul>
+                {this.state.data.map(function (params, i) {
+                  return <List
+                    key={params.id}
+                  >
+
+                    {params.type === "artist" ?
+                      <div>
+                        <NavLink exact activeStyle={{ color: "white" }} to={{
+                          pathname: "/artist/" + `${params.id}`,
+                          params
+                        }}
+                        >
+                          {params.title}
+                        </NavLink>
+                        <Button
+                          variant="contained"
+                          color="primary"
+                          disabled={params.validation}
+                          onClick={() => Home.addToStore(params, this.props, i)}
+                        >
+                          FAV
+                        </Button>
+                      </div>
+                      :
+                      <div>
+                        <NavLink exact activeStyle={{ color: "white" }} to={{
+                          pathname: "/album/" + `${params.id}`,
+                          params
+                        }}
+                        >
+                          {params.title}
+                        </NavLink>
+                        <Button
+                          variant="contained"
+                          color="primary"
+                          disabled={params.validation}
+                          onClick={() => Home.addToStore(params, this.props, i)}
+                        >
+                          FAV
+                        </Button>
+                      </div>
+                    }
+                  </List>
+                }, this
+                )}
+              </ul>
+
+              <FlexRadius>
+                <Button
+                  variant="contained"
+                  onClick={e => this.changePageLess()}
+                  disabled={this.state.pagination <= 1}
+                >
+                  -1
+                </Button>
+
+                <Pagination>{this.state.pagination}</Pagination>
+
+                <Button
+                  variant="contained"
+                  onClick={e => this.changePageMore()}
+                  disabled={this.state.pagination >= this.state.totalPages}
+                >
+                  +1
+                </Button>
+              </FlexRadius>
+
             </div>
-             : 
-             <div>
-             <NavLink exact activeStyle={{color:"white"}} to={{
-                pathname: "/album/" + `${params.id}`,
-                params
-            }}
-            >
-            {params.title}
-            </NavLink>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={() => Home.addToStore(params, this.props)}
-            >
-              LOVE
-            </Button>
-            </div>
-            }
-            </li>
-          },this
-          )}
-        </ul>
-
-          <button
-            onClick={e => this.changePageLess()}
-            disabled={this.state.pagination <= 1}
-          >
-          -1
-        </button>
-        <p>{this.state.pagination}</p>
-        <button 
-          onClick={e => this.changePageMore()}
-          disabled={this.state.pagination >= this.state.totalPages}
-        >
-          +1
-        </button>
-        
-        </div>
-        :
-        
-        <p>Nothing to show</p>
-        }
-    
-        </div>
+            :
+            null
+          }
 
 
+          <Divider variant="middle" />
 
-        <p>----------</p>
-        <p>FAVORITE LIST</p>
-
-          
-
+          {this.props.collection.length > 0 ?
+          <p>FAVORITE LIST</p> : null}
 
 
-          {this.props.collection.map(function(params){            
+          {this.props.collection.map(function (params) {
             console.log(params)
-          return <li 
-          key={params.id}
-          >
-
-          {params.type === "artist" ? 
-
-
-          <div>
-          <NavLink exact activeStyle={{color:"white"}} to={{
-            pathname: "/artist/" + `${params.id}`,
-            params
-          }}
-          >
-          {params.title}
-          </NavLink>
-
-          <Button
-              variant="contained"
-              color="primary"
-              onClick={() => Home.removeFromStore(params, this.props)}
+            return <List
+              key={params.id}
             >
-              DELETE
-            </Button>
+
+              {params.type === "artist" ?
+
+                <div>
+                  <NavLink exact activeStyle={{ color: "white" }} to={{
+                    pathname: "/artist/" + `${params.id}`,
+                    params
+                  }}
+                  >
+                    {params.title}
+                  </NavLink>
+
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={() => Home.removeFromStore(params, this.props)}
+                  >
+                    DELETE
+                  </Button>
 
 
-          </div>
-           : 
-           <div>
-           <NavLink exact activeStyle={{color:"white"}} to={{
-              pathname: "/album/" + `${params.id}`,
-              params
-          }}
-          >
-          {params.title}
-          </NavLink>
+                </div>
+                :
+                <div>
+                  <NavLink exact activeStyle={{ color: "white" }} to={{
+                    pathname: "/album/" + `${params.id}`,
+                    params
+                  }}
+                  >
+                    {params.title}
+                  </NavLink>
 
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={() => Home.removeFromStore(params, this.props)}
-            >
-              DELETE
-            </Button>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={() => Home.removeFromStore(params, this.props)}
+                  >
+                    DELETE
+                  </Button>
 
-          </div>
-        
-        }
-        </li>
-        },this
-        )}
+                </div>
 
+              }
+            </List>
+          }, this
+          )}
 
-
-
+        </div>
 
       </div>
     );
   }
 }
+
 
 export const Home = connect(store => store)(withRouter(_Home));

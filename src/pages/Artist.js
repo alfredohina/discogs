@@ -1,7 +1,13 @@
 import React, { Component } from "react";
 import axios from 'axios';
 import { Popup } from "../components/Popup"
+import styled from 'styled-components'
+import Button from '@material-ui/core/Button';
 
+
+const Paragraph = styled.p`
+  margin: 10px 60px;
+  `
 
 export class Artist extends Component {
     constructor() {
@@ -33,17 +39,20 @@ export class Artist extends Component {
         const params = this.state.data
         const data = this.props.location.params
         return (
-            <div>
+            <div className="App-header">
 
-                <p>{data.id}</p>
-                <p>{data.title}</p>
-                <p>{data.type}</p>
-                <p>{params.profile}</p>
+                <Paragraph>{data.id}</Paragraph>
+                <Paragraph>{data.title}</Paragraph>
+                <Paragraph>{data.type}</Paragraph>
+                <Paragraph>{params.profile}</Paragraph>
                 <img src={data.cover_image} />
-                <p>{params.type}</p>
+                <Paragraph>{params.type}</Paragraph>
 
                 <div>
-                    <button onClick={this.togglePopup.bind(this)}>Show {data.title} albums</button>
+                    <Button variant="contained" color="primary" onClick={this.togglePopup.bind(this)}>
+                    Show {data.title} albums
+                    </Button>
+
                     {this.state.showModal ?
                         <Popup
                             text={this.state.data.releases_url}

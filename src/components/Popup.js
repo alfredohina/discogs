@@ -1,5 +1,47 @@
 import React, { Component } from 'react';
 import axios from 'axios';
+import styled from 'styled-components'
+import Button from '@material-ui/core/Button';
+
+const Txt = styled.p`
+  color: #0066cc;
+  margin: 1px;
+`
+
+const Ul = styled.ul`
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: column;
+`;
+
+const List = styled.li`
+  list-style-type: none; 
+  margin: 3px;
+`
+
+const FlexRadius = styled.div`
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+`
+
+const Pagination = styled.p`
+  margin: 0px 20px;
+  color: black;
+`
+const CloseTxt = styled.p`
+  margin: 20px;
+  color: black;
+  width: 100px;
+  text-align: center;
+  background-color: tomato;
+`
+
+const Close = styled.div`
+  float: right;
+`
 
 export class Popup extends Component {
   constructor() {
@@ -51,36 +93,49 @@ export class Popup extends Component {
     return (
       <div className='modal'>
         <div className='modalCard'>
-          <ul>
+          <Ul>
             {this.state.albums.map(function (params) {
               console.log(params)
-              return <li
+              return <List
                 key={params.id}
               >
 
-                <p>{params.title}</p>
-                <p>{params.year}</p>
+                <Txt>{params.year} · </Txt>
+                <Txt>{params.title}</Txt>
 
-              </li>
+              </List>
             }
             )}
-          </ul>
+          </Ul>
 
-          <button
-            onClick={e => this.changePageLess()}
-            disabled={this.state.pagination <= 1}
-          >
-            -1
-        </button>
-          <p>{this.state.pagination}</p>
-          <button
-            onClick={e => this.changePageMore()}
-            disabled={this.state.pagination >= this.state.totalPages}
-          >
-            +1
-        </button>
 
-          <button onClick={this.props.closePopup}>CLOSE</button>
+
+          <FlexRadius>
+                <Button
+                  variant="contained"
+                  onClick={e => this.changePageLess()}
+                  disabled={this.state.pagination <= 1}
+                >
+                  -1
+                </Button>
+
+                <Pagination>{this.state.pagination}</Pagination>
+
+                <Button
+                  variant="contained"
+                  onClick={e => this.changePageMore()}
+                  disabled={this.state.pagination >= this.state.totalPages}
+                >
+                  +1
+                </Button>
+              </FlexRadius>
+
+
+          <Close onClick={this.props.closePopup}>
+            <CloseTxt>CLOSE</CloseTxt>
+          </Close>
+
+
         </div>
       </div>
     );
